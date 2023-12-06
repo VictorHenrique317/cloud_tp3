@@ -1,35 +1,40 @@
+import random
 import redis
 import json
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
 
 def getMockData():
+    random_percentage = lambda: random.randint(0, 100) / 100
+
     data_dict = {
-        'percent-network-egress': 0.8,
-        'percent-memory-cache': 0.6,
-        'moving-avg-cpu1': 0.5,
-        'moving-avg-cpu2': 0.6,
-        'moving-avg-cpu3': 0.4,
-        'moving-avg-cpu4': 0.2,
-        'moving-avg-cpu5': 0.3,
-        'moving-avg-cpu6': 0.1,
-        'moving-avg-cpu7': 0.9,
-        'moving-avg-cpu8': 0.4,
-        'moving-avg-cpu9': 0.5,
-        'moving-avg-cpu10': 0.4,
-        'moving-avg-cpu11': 0.7,
-        'moving-avg-cpu12': 0.3,
-        'moving-avg-cpu13': 0.6,
-        'moving-avg-cpu14': 0.5,
-        'moving-avg-cpu15': 0.8,
-        'moving-avg-cpu16': 0.5,
+        'percent-network-egress': 0.8 * random_percentage(),
+        'percent-memory-cache': 0.6 * random_percentage(),
+        'moving-avg-cpu1': 0.5 * random_percentage(),
+        'moving-avg-cpu2': 0.6 * random_percentage(),
+        'moving-avg-cpu3': 0.4 * random_percentage(),
+        'moving-avg-cpu4': 0.2 * random_percentage(),
+        'moving-avg-cpu5': 0.3 * random_percentage(),
+        'moving-avg-cpu6': 0.1 * random_percentage(),
+        'moving-avg-cpu7': 0.9 * random_percentage(),
+        'moving-avg-cpu8': 0.4 * random_percentage(),
+        'moving-avg-cpu9': 0.5 * random_percentage(),
+        'moving-avg-cpu10': 0.4 * random_percentage(),
+        'moving-avg-cpu11': 0.7 * random_percentage(),
+        'moving-avg-cpu12': 0.3 * random_percentage(),
+        'moving-avg-cpu13': 0.6 * random_percentage(),
+        'moving-avg-cpu14': 0.5 * random_percentage(),
+        'moving-avg-cpu15': 0.8 * random_percentage(),
+        'moving-avg-cpu16': 0.5 * random_percentage(),
     }
 
     return data_dict
 
 def getDataFromRedis():
-    r = redis.Redis(host='localhost', port=6379, db=0)
+    # r = redis.Redis(host='localhost', port=6379, db=0)
+    r = redis.Redis(host='67.159.94.11', port=6379, db=0)
 
     my_id = 0
     key = f"{my_id}-proj3-output"
@@ -40,13 +45,17 @@ def getDataFromRedis():
     data_dict = json.loads(data)
     return data_dict
 
-data_dict = getMockData()
+def getDataDict():
+    data_dict = getMockData()
+    return data_dict
+
+data_dict = getDataDict()
 network_egress = data_dict['percent-network-egress']
 memory_cache = data_dict['percent-memory-cache']
 moving_cpu_avgs = []
 
-for i in range(17):
-    moving_cpu_avgs.append(data_dict[f'moving-avg-cpu{i+1}'])
+for i in range(1, 17):
+    moving_cpu_avgs.append(data_dict[f'moving-avg-cpu{i}'])
 
 
 app = dash.Dash(__name__)
@@ -54,25 +63,84 @@ app = dash.Dash(__name__)
 app.layout = html.Div(children=[
     html.H1(children='Dashboard de monitoramento de recursos'),
 
-    html.Div(children='''
-        Métricas retiradas do Redis.
+    html.H3(children='''
+        Métricas:
     '''),
+
+    html.Div(id='network-output', children=f'Porcentagem de saída de rede: {network_egress: .2f}%'),
+    html.Div(id= 'memory-cache', children=f'Cache de memória: {memory_cache: .2f}%'),
+
+    dcc.Interval(
+        id='interval-component-metrics',
+        interval=1*1000,  # in milliseconds
+        n_intervals=0
+    ),
 
     dcc.Graph(
         id='main-graph',
         figure={
             'data': [
-                {'x': list(range(1, 18)), 'y': moving_cpu_avgs, 'type': 'bar', 'name': 'CPU'},
+                {'x': list(range(1, 17)), 'y': moving_cpu_avgs, 'type': 'bar', 'name': 'CPU'},
             ],
             'layout': {
-                'title': 'Moving Average da utilização de CPU'
+                'title': '<b> Média móvel da porcentagem de utilização das CPU\'s: </b>',
+                'xaxis': {
+                    'tickmode': 'array',
+                    'tickvals': list(range(1, 17))
+                },
+                'yaxis': {
+                    'range': [0, 1]
+                }
             }
         }
     ),
 
-    html.Div(children=f'Network Egress: {network_egress}'),
-    html.Div(children=f'Memory Cache: {memory_cache}'),
-])
+    dcc.Interval(
+        id='interval-component-graph',
+        interval=1*1000,  # in milliseconds
+        n_intervals=0
+    )
+
+], style={'display': 'flex', 'flex-direction': 'column', 'justify-content': 'center', 'align-items': 'center', 'height': '100vh'})
+
+@app.callback(
+    Output('network-output', 'children'),
+    Output('memory-cache', 'children'),
+    Input('interval-component-metrics', 'n_intervals')
+)
+def update_values(n):
+    data_dict = getDataDict() 
+    network_egress = data_dict['percent-network-egress']
+    memory_cache = data_dict['percent-memory-cache']
+
+    return f'Porcentagem de saída de rede: {network_egress: .2f}%', f'Cache de memória: {memory_cache: .2f}%'
+
+@app.callback(
+    Output('main-graph', 'figure'),
+    Input('interval-component-graph', 'n_intervals')
+)
+def update_graph_live(n):
+    data_dict = getDataDict()
+    moving_cpu_avgs = [data_dict[f'moving-avg-cpu{i}'] for i in range(1, 17)]
+
+    # Create new figure
+    figure={
+        'data': [
+            {'x': list(range(1, 17)), 'y': moving_cpu_avgs, 'type': 'bar', 'name': 'CPU'},
+        ],
+        'layout': {
+            'title': '<b> Média móvel da porcentagem de utilização das CPU\'s: </b>',
+            'xaxis': {
+                'tickmode': 'array',
+                'tickvals': list(range(1, 17))
+            },
+            'yaxis': {
+                'range': [0, 1]
+            }
+        }
+    }
+
+    return figure
 
 #  The dashboard will be served at localhost:8050 by default.
 
