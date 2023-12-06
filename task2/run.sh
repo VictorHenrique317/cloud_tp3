@@ -1,0 +1,1 @@
+docker build -t cloud_tp3:latest .; docker run -p 8050:8050 cloud_tp3:latest
