@@ -145,4 +145,5 @@ def update_graph_live(n):
 #  The dashboard will be served at localhost:8050 by default.
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host='0.0.0.0', debug=True)
+
