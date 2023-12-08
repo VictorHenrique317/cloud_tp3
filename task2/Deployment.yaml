@@ -14,7 +14,6 @@ spec:
     spec:
       containers:
       - name: dashboard
-        image: cloud_tp3_dashboard:latest
-        imagePullPolicy: IfNotPresent
+        image: victorhenrique5800/cloud_tp3_dashboard:latest
         ports:
         - containerPort: 31215
