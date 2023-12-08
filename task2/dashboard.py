@@ -140,7 +140,7 @@ def update_graph_live(n):
                 'tickvals': list(range(16))
             },
             'yaxis': {
-                'range': [0, 1]
+                'range': [0, 100]
             }
         }
     }
