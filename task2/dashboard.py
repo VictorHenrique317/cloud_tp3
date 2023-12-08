@@ -6,6 +6,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
+# Função para gerar dados aleatórios para testes
 def getMockData():
     random_percentage = lambda: random.randint(0, 100) / 100
 
@@ -36,7 +37,7 @@ def getDataFromRedis():
     # r = redis.Redis(host='localhost', port=6379, db=0)
     r = redis.Redis(host='67.159.94.11', port=6379, db=0)
 
-    my_id = 0
+    my_id = "victorribeiro"
     key = f"{my_id}-proj3-output"
     data = r.get(key)
 
@@ -46,18 +47,18 @@ def getDataFromRedis():
     return data_dict
 
 def getDataDict():
-    data_dict = getMockData()
+    data_dict = getDataFromRedis()
     return data_dict
 
+# Retira os dados do Redis e os armazena em variáveis
 data_dict = getDataDict()
 network_egress = data_dict['percent-network-egress']
 memory_cache = data_dict['percent-memory-cache']
 moving_cpu_avgs = []
-
 for i in range(16):
     moving_cpu_avgs.append(data_dict[f'moving-avg-cpu{i}'])
 
-
+# Cria a aplicação Dash
 app = dash.Dash(__name__)
 
 app.layout = html.Div(children=[
@@ -103,6 +104,8 @@ app.layout = html.Div(children=[
 
 ], style={'display': 'flex', 'flex-direction': 'column', 'justify-content': 'center', 'align-items': 'center', 'height': '100vh'})
 
+
+# Define um callback para atualizar os valores das métricas a cada segundo
 @app.callback(
     Output('network-output', 'children'),
     Output('memory-cache', 'children'),
@@ -115,6 +118,7 @@ def update_values(n):
 
     return f'Porcentagem de saída de rede: {network_egress: .2f}%', f'Cache de memória: {memory_cache: .2f}%'
 
+# Define um callback para atualizar o gráfico a cada segundo
 @app.callback(
     Output('main-graph', 'figure'),
     Input('interval-component-graph', 'n_intervals')
@@ -123,7 +127,6 @@ def update_graph_live(n):
     data_dict = getDataDict()
     moving_cpu_avgs = [data_dict[f'moving-avg-cpu{i}'] for i in range(16)]
 
-    # Create new figure
     figure={
         'data': [
             {'x': list(range(16)), 'y': moving_cpu_avgs, 'type': 'bar', 'name': 'CPU'},
@@ -142,7 +145,7 @@ def update_graph_live(n):
 
     return figure
 
-#  The dashboard will be served at localhost:8050 by default.
+# Executa a aplicação
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', debug=True)
 
