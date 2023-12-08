@@ -25,13 +25,13 @@ def handler(input: dict, context: object) -> dict:
     # Calcula uma média móvel de utilização de cada CPU no ultimo minuto
     simple_moving_avgs = []
     for i, cpu_percent_X in enumerate(cpu_percentages):
-        X_utilizations = context['env'].get(f'cpu{i+1}_utilizations', [])
+        X_utilizations = context.env.get(f'cpu{i+1}_utilizations', [])
         X_utilizations.append(cpu_percent_X)
         
         if len(X_utilizations) > 60:
             X_utilizations.pop(0)
         
-        context['env'][f'cpu{i+1}_utilizations'] = X_utilizations
+        context.env[f'cpu{i+1}_utilizations'] = X_utilizations
         X_simple_moving_avg = np.mean(X_utilizations)
         simple_moving_avgs.append(X_simple_moving_avg)
         
