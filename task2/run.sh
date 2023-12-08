@@ -1,1 +1,1 @@
-docker build -t cloud_tp3:latest .; docker run -p 8050:8050 cloud_tp3:latest
+docker build -t cloud_tp3_dashboard:latest .; docker run -p 31215:31215 cloud_tp3_dashboard:latest
