@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  requirementsfile: numpy
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2023-12-08T16:06:55Z"
+  name: requirementsfile
+  namespace: victorribeiro
+  resourceVersion: "3422054"
+  uid: 9ada686c-c46d-4cd9-be29-f2b3921d6f1e
