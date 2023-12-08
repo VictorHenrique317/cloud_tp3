@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  REDIS_OUTPUT_KEY: victorribeiro-proj3-output
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2023-12-08T15:54:33Z"
+  name: outputkey
+  namespace: victorribeiro
+  resourceVersion: "3420291"
+  uid: 2aa6ff82-f939-4323-883c-e00271ceff83
