@@ -54,7 +54,7 @@ network_egress = data_dict['percent-network-egress']
 memory_cache = data_dict['percent-memory-cache']
 moving_cpu_avgs = []
 
-for i in range(1, 17):
+for i in range(16):
     moving_cpu_avgs.append(data_dict[f'moving-avg-cpu{i}'])
 
 
@@ -80,13 +80,13 @@ app.layout = html.Div(children=[
         id='main-graph',
         figure={
             'data': [
-                {'x': list(range(1, 17)), 'y': moving_cpu_avgs, 'type': 'bar', 'name': 'CPU'},
+                {'x': list(range(16)), 'y': moving_cpu_avgs, 'type': 'bar', 'name': 'CPU'},
             ],
             'layout': {
                 'title': '<b> Média móvel da porcentagem de utilização das CPU\'s: </b>',
                 'xaxis': {
                     'tickmode': 'array',
-                    'tickvals': list(range(1, 17))
+                    'tickvals': list(range(16))
                 },
                 'yaxis': {
                     'range': [0, 1]
@@ -121,18 +121,18 @@ def update_values(n):
 )
 def update_graph_live(n):
     data_dict = getDataDict()
-    moving_cpu_avgs = [data_dict[f'moving-avg-cpu{i}'] for i in range(1, 17)]
+    moving_cpu_avgs = [data_dict[f'moving-avg-cpu{i}'] for i in range(16)]
 
     # Create new figure
     figure={
         'data': [
-            {'x': list(range(1, 17)), 'y': moving_cpu_avgs, 'type': 'bar', 'name': 'CPU'},
+            {'x': list(range(16)), 'y': moving_cpu_avgs, 'type': 'bar', 'name': 'CPU'},
         ],
         'layout': {
             'title': '<b> Média móvel da porcentagem de utilização das CPU\'s: </b>',
             'xaxis': {
                 'tickmode': 'array',
-                'tickvals': list(range(1, 17))
+                'tickvals': list(range(16))
             },
             'yaxis': {
                 'range': [0, 1]

@@ -4,7 +4,7 @@ def handler(input: dict, context: object) -> dict:
     # Extrai as medições de uso de recursos
     nb_cpus = 16
     cpu_percentages = []
-    for i in range(1, nb_cpus + 1):
+    for i in range(nb_cpus):
         cpu_percentages.append(input.get(f'cpu_percent-{i}'))
 
     virtual_memory_total = input.get('virtual_memory-total')
@@ -25,13 +25,13 @@ def handler(input: dict, context: object) -> dict:
     # Calcula uma média móvel de utilização de cada CPU no ultimo minuto
     simple_moving_avgs = []
     for i, cpu_percent_X in enumerate(cpu_percentages):
-        X_utilizations = context.env.get(f'cpu{i+1}_utilizations', [])
+        X_utilizations = context.env.get(f'cpu{i}_utilizations', [])
         X_utilizations.append(cpu_percent_X)
         
         if len(X_utilizations) > 60:
             X_utilizations.pop(0)
         
-        context.env[f'cpu{i+1}_utilizations'] = X_utilizations
+        context.env[f'cpu{i}_utilizations'] = X_utilizations
         X_simple_moving_avg = np.mean(X_utilizations)
         simple_moving_avgs.append(X_simple_moving_avg)
         
@@ -41,6 +41,6 @@ def handler(input: dict, context: object) -> dict:
     response['percent-memory-cache'] = percent_memory_cache
 
     for i, simple_moving_avg in enumerate(simple_moving_avgs):
-        response[f'moving-avg-cpu{i+1}'] = simple_moving_avg
+        response[f'moving-avg-cpu{i}'] = simple_moving_avg
 
     return response
