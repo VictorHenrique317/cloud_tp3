@@ -34,8 +34,8 @@ def getMockData():
     return data_dict
 
 def getDataFromRedis():
-    # r = redis.Redis(host='localhost', port=6379, db=0)
-    r = redis.Redis(host='67.159.94.11', port=6379, db=0)
+    # r = redis.Redis(host='67.159.94.11', port=6379, db=0)
+    r = redis.Redis(host='192.168.121.66', port=6379, db=0)
 
     my_id = "victorribeiro"
     key = f"{my_id}-proj3-output"
