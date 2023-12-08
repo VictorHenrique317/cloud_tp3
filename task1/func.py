@@ -12,8 +12,8 @@ def handler(input: dict, context: object) -> dict:
     virtual_memory_cached = input.get('virtual_memory-cached')
 
     # Dados de tráfego de rede
-    bytes_sent = input.get('net_io_counters_eth0-bytes_sent1')
-    bytes_recv = input.get('net_io_counters_eth0-bytes_recv1')
+    bytes_sent = input.get('net_io_counters_eth0-packets_sent')
+    bytes_recv = input.get('net_io_counters_eth0-packets_recv')
 
     # Calcula a porcentagem de bytes de tráfego de saída
     total_bytes = bytes_sent + bytes_recv
