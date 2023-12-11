@@ -1,6 +1,6 @@
-# Projeto de Monitoramento de Recursos e Funções Serverless
+# TP3 - Victor Henrique Silva Ribeiro
 
-Este projeto consiste na implementação e implantação de uma função serverless para analisar o uso de recursos da máquina virtual do curso. Além disso, implementamos um painel para exibir continuamente o uso de recursos e criamos um runtime simplificado para a execução de funções.
+Este trabalho consiste na implementação e implantação de uma função serverless para analisar o uso de recursos da máquina virtual do curso. Além disso, foi implementado um painel para exibir continuamente o uso de recursos.
 
 ## Tarefa 1
 
